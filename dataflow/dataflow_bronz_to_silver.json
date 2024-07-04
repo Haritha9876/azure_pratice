@@ -9,7 +9,7 @@
 						"referenceName": "ds1_dl_df_csv_bronz",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "orderitems"
 				}
 			],
 			"sinks": [
@@ -42,8 +42,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 cast(output(",
+				"     ignoreNoFilesFound: false) ~> orderitems",
+				"orderitems cast(output(",
 				"          ORDER_ID as integer,",
 				"          CUSTOMER_ID as integer '000',",
 				"          STORE_ID as integer",
