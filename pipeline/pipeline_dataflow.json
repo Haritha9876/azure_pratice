@@ -87,7 +87,7 @@
 								},
 								"cases": [
 									{
-										"value": "csv",
+										"value": "txt",
 										"activities": [
 											{
 												"name": "Copy_csv landing to bronz",
