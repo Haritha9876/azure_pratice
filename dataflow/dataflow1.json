@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "products"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds1_dl_df_Json_bronz_custumer",
+						"type": "DatasetReference"
+					},
+					"name": "Customers"
 				}
 			],
 			"sinks": [
@@ -26,6 +33,20 @@
 						"type": "DatasetReference"
 					},
 					"name": "sinkjson"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds1_dl_df_Parquet_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds1_dl_df_Parquet_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
 				}
 			],
 			"transformations": [
@@ -40,6 +61,21 @@
 				},
 				{
 					"name": "cast2"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "cast3"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "select3"
 				}
 			],
 			"scriptLines": [
@@ -63,6 +99,15 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> products",
+				"source(output(",
+				"          CUSTOMER_ID as string,",
+				"          FULL_NAME as string,",
+				"          EMAIL_ADDRESS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> Customers",
 				"stores cast(output(",
 				"          STORE_ID as integer,",
 				"          STORE_NAME as string,",
@@ -74,11 +119,11 @@
 				"cast1 derive({ingested by} = 'haritha',",
 				"          ingested_data = currentUTC()) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
-				"          STORE_ID,",
-				"          STORE_NAME,",
-				"          WEB_ADDRESS,",
-				"          LATITUDE,",
-				"          LONGITUDE,",
+				"          Store_Id = STORE_ID,",
+				"          Store_Name = STORE_NAME,",
+				"          Web_Address = WEB_ADDRESS,",
+				"          Latitude = LATITUDE,",
+				"          Longitude = LONGITUDE,",
 				"          Ingested_By = {ingested by}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
@@ -89,6 +134,34 @@
 				"          UNIT_PRICE as double",
 				"     ),",
 				"     errors: true) ~> cast2",
+				"cast2 derive(ingested_by = 'haritha',",
+				"          ingested_date = currentUTC()) ~> derivedColumn2",
+				"derivedColumn2 select(mapColumn(",
+				"          Product_Id = PRODUCT_ID,",
+				"          Product_Name = PRODUCT_NAME,",
+				"          Unit_Price = UNIT_PRICE,",
+				"          Ingested_By = ingested_by,",
+				"          Ingested_Date = ingested_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"Customers cast(output(",
+				"          CUSTOMER_ID as integer,",
+				"          FULL_NAME as string,",
+				"          EMAIL_ADDRESS as string",
+				"     ),",
+				"     errors: true) ~> cast3",
+				"cast3 derive(ingested_by = 'Haritha',",
+				"          ingested_date = currentUTC()) ~> derivedColumn3",
+				"derivedColumn3 select(mapColumn(",
+				"          Customer_Id = CUSTOMER_ID,",
+				"          Full_Name = FULL_NAME,",
+				"          Email_Address = EMAIL_ADDRESS,",
+				"          Ingested_By = ingested_by,",
+				"          Ingested_Date = ingested_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
@@ -96,7 +169,23 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkjson"
+				"     skipDuplicateMapOutputs: true) ~> sinkjson",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
 			]
 		}
 	}
