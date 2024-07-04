@@ -9,7 +9,7 @@
 						"referenceName": "ds_dl_df_Parquet_bronz",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "orders"
 				}
 			],
 			"sinks": [
@@ -24,6 +24,12 @@
 			"transformations": [
 				{
 					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -37,12 +43,29 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> source1",
-				"source1 cast(output(",
-				"          ORDER_ID as string",
+				"     format: 'parquet') ~> orders",
+				"orders cast(output(",
+				"          ORDER_ID as integer,",
+				"          ORDER_DATETIME as string,",
+				"          CUSTOMER_ID as integer,",
+				"          ORDER_STATUS as string,",
+				"          STORE_ID as integer",
 				"     ),",
 				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"cast1 derive(ingested_by = 'Haritha',",
+				"          ingested = currentUTC()) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          Order_Id = ORDER_ID,",
+				"          Order_Datetime = ORDER_DATETIME,",
+				"          Customer_Id = CUSTOMER_ID,",
+				"          Order_Status = ORDER_STATUS,",
+				"          Store_Id = STORE_ID,",
+				"          Ingested_By = ingested_by,",
+				"          {Ingested-Date} = ingested",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     umask: 0022,",
