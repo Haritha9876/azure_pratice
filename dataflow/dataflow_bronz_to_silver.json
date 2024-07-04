@@ -1,0 +1,80 @@
+{
+	"name": "dataflow_bronz_to_silver",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds1_dl_df_csv_bronz",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds1_dl_df_Parquet_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ORDER_ID as string,",
+				"          ORDER_DATETIME as string,",
+				"          CUSTOMER_ID as string,",
+				"          ORDER_STATUS as string,",
+				"          STORE_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 cast(output(",
+				"          ORDER_ID as integer,",
+				"          CUSTOMER_ID as integer '000',",
+				"          STORE_ID as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 derive(Order_Time = split(ORDER_DATETIME,' ')[2],",
+				"          Ingested_by = 'Haritha',",
+				"          Ingestion_Date = currentDate(),",
+				"          Ingestion_Time = currentTimestamp()) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          Order_Id = ORDER_ID,",
+				"          Order_DateTime = ORDER_DATETIME,",
+				"          Order_Status = ORDER_STATUS,",
+				"          Customer_Id = CUSTOMER_ID,",
+				"          Store_Id = STORE_ID,",
+				"          Order_Time,",
+				"          Ingested_by,",
+				"          Ingestion_Date,",
+				"          Ingestion_Time",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

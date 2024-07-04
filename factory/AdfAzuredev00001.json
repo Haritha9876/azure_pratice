@@ -1,0 +1,9 @@
+{
+	"name": "AdfAzuredev00001",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ff51eae8-273f-4180-beab-fd31a2f18e1c",
+		"tenantId": "a3aaa241-3cf0-4d8e-be1d-f50527982234"
+	}
+}
