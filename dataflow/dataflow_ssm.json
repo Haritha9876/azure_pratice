@@ -10,11 +10,90 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "df_Parquet_products_silver",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "df_Parquet_orders_silver",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "df_Parquet_store_silver",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
+				},
+				{
+					"dataset": {
+						"referenceName": "df_Parquet_cutomer_silver",
+						"type": "DatasetReference"
+					},
+					"name": "source5"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "join4"
+				},
+				{
+					"name": "select4"
+				}
+			],
 			"scriptLines": [
+				"source(output(",
+				"          ORDER_ID as integer,",
+				"          LINE_ITEM_ID as integer,",
+				"          PRODUCT_ID as integer,",
+				"          UNIT_PRICE as double,",
+				"          QUANTITY as integer,",
+				"          Ingested_by as string,",
+				"          Ingestion_Date as date,",
+				"          Ingestion_Time as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source1",
+				"source(output(",
+				"          Product_Id as integer,",
+				"          Product_Name as string,",
+				"          Unit_Price as string,",
+				"          Ingested_By as string,",
+				"          Ingested_Time as timestamp,",
+				"          Ingested_Date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source2",
 				"source(output(",
 				"          Order_Id as integer,",
 				"          Order_Datetime as timestamp,",
@@ -28,7 +107,127 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> source1"
+				"     format: 'parquet') ~> source3",
+				"source(output(",
+				"          Store_Id as integer,",
+				"          Store_Name as string,",
+				"          Web_Address as string,",
+				"          Latitude as double,",
+				"          Longitude as double,",
+				"          Ingested_By as string,",
+				"          Ingested_Time as timestamp,",
+				"          Ingested_Date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source4",
+				"source(output(",
+				"          Customer_Id as integer,",
+				"          Full_Name as string,",
+				"          Email_Address as string,",
+				"          Ingested_By as string,",
+				"          Ingested_Time as timestamp,",
+				"          Ingested_Date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source5",
+				"source1, source2 join(source1@PRODUCT_ID == source2@Product_Id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          ORDER_ID,",
+				"          LINE_ITEM_ID,",
+				"          PRODUCT_ID = source1@PRODUCT_ID,",
+				"          Product_Name,",
+				"          UNIT_PRICE = source1@UNIT_PRICE,",
+				"          QUANTITY,",
+				"          Ingested_by = source1@Ingested_by,",
+				"          Ingestion_Date,",
+				"          Ingestion_Time",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1, source3 join(select1@ORDER_ID == source3@Order_Id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
+				"          ORDER_ID = select1@ORDER_ID,",
+				"          LINE_ITEM_ID,",
+				"          PRODUCT_ID,",
+				"          Product_Name,",
+				"          UNIT_PRICE,",
+				"          QUANTITY,",
+				"          Ingested_by = select1@Ingested_by,",
+				"          Ingestion_Date,",
+				"          Ingestion_Time,",
+				"          Order_Datetime,",
+				"          Customer_Id,",
+				"          Order_Status,",
+				"          Store_Id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2, source4 join(select2@Store_Id == source4@Store_Id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3 select(mapColumn(",
+				"          ORDER_ID,",
+				"          LINE_ITEM_ID,",
+				"          PRODUCT_ID,",
+				"          Product_Name,",
+				"          UNIT_PRICE,",
+				"          QUANTITY,",
+				"          Ingested_by = select2@Ingested_by,",
+				"          Ingestion_Date,",
+				"          Ingestion_Time,",
+				"          Order_Datetime,",
+				"          Customer_Id,",
+				"          Order_Status,",
+				"          Store_Id = select2@Store_Id,",
+				"          Store_Name,",
+				"          Web_Address,",
+				"          Latitude,",
+				"          Longitude",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select3, source5 join(select3@Customer_Id == source5@Customer_Id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join4",
+				"join4 select(mapColumn(",
+				"          ORDER_ID,",
+				"          LINE_ITEM_ID,",
+				"          PRODUCT_ID,",
+				"          Product_Name,",
+				"          UNIT_PRICE,",
+				"          QUANTITY,",
+				"          Ingested_by = select3@Ingested_by,",
+				"          Ingestion_Date,",
+				"          Ingestion_Time,",
+				"          Order_Datetime,",
+				"          Customer_Id = select3@Customer_Id,",
+				"          Order_Status,",
+				"          Store_Id,",
+				"          Store_Name,",
+				"          Web_Address,",
+				"          Latitude,",
+				"          Longitude,",
+				"          Full_Name,",
+				"          Email_Address",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4"
 			]
 		}
 	}

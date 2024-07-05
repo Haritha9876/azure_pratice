@@ -1,5 +1,5 @@
 {
-	"name": "df_orderitems_parquet",
+	"name": "df_Parquet_cutomer_silver",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage1",
@@ -10,43 +10,35 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "orderitem",
+				"folderPath": "customer",
 				"fileSystem": "silver"
 			},
 			"compressionCodec": "snappy"
 		},
 		"schema": [
 			{
-				"name": "ORDER_ID",
+				"name": "Customer_Id",
 				"type": "INT32"
 			},
 			{
-				"name": "LINE_ITEM_ID",
-				"type": "INT32"
-			},
-			{
-				"name": "PRODUCT_ID",
-				"type": "INT32"
-			},
-			{
-				"name": "UNIT_PRICE",
-				"type": "DOUBLE"
-			},
-			{
-				"name": "QUANTITY",
-				"type": "INT32"
-			},
-			{
-				"name": "Ingested_by",
+				"name": "Full_Name",
 				"type": "UTF8"
 			},
 			{
-				"name": "Ingestion_Date",
-				"type": "DATE"
+				"name": "Email_Address",
+				"type": "UTF8"
 			},
 			{
-				"name": "Ingestion_Time",
+				"name": "Ingested_By",
+				"type": "UTF8"
+			},
+			{
+				"name": "Ingested_Time",
 				"type": "INT96"
+			},
+			{
+				"name": "Ingested_Date",
+				"type": "DATE"
 			}
 		]
 	}
