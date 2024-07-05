@@ -1,0 +1,45 @@
+{
+	"name": "ds1_dl_df_Parquet_customers_silver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "customer",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Store_Id",
+				"type": "INT32"
+			},
+			{
+				"name": "Store_Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Web_Address",
+				"type": "UTF8"
+			},
+			{
+				"name": "Latitude",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "Longitude",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "Ingested_By",
+				"type": "UTF8"
+			}
+		]
+	}
+}
