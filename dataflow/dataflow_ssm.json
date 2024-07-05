@@ -1,0 +1,35 @@
+{
+	"name": "dataflow_ssm",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "df_orderitems_parquet",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          Order_Id as integer,",
+				"          Order_Datetime as timestamp,",
+				"          Customer_Id as integer,",
+				"          Order_Status as string,",
+				"          Store_Id as integer,",
+				"          Ingested_By as string,",
+				"          Ingested_Time as timestamp,",
+				"          Ingested_Date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source1"
+			]
+		}
+	}
+}

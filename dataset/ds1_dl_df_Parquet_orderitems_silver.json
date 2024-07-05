@@ -15,31 +15,6 @@
 			},
 			"compressionCodec": "snappy"
 		},
-		"schema": [
-			{
-				"name": "Store_Id",
-				"type": "INT32"
-			},
-			{
-				"name": "Store_Name",
-				"type": "UTF8"
-			},
-			{
-				"name": "Web_Address",
-				"type": "UTF8"
-			},
-			{
-				"name": "Latitude",
-				"type": "DOUBLE"
-			},
-			{
-				"name": "Longitude",
-				"type": "DOUBLE"
-			},
-			{
-				"name": "Ingested_By",
-				"type": "UTF8"
-			}
-		]
+		"schema": []
 	}
 }

@@ -24,19 +24,19 @@
 				"type": "String"
 			},
 			{
-				"name": "ORDER_DATETIME",
+				"name": "LINE_ITEM_ID",
 				"type": "String"
 			},
 			{
-				"name": "CUSTOMER_ID",
+				"name": "PRODUCT_ID",
 				"type": "String"
 			},
 			{
-				"name": "ORDER_STATUS",
+				"name": "UNIT_PRICE",
 				"type": "String"
 			},
 			{
-				"name": "STORE_ID",
+				"name": "QUANTITY",
 				"type": "String"
 			}
 		]

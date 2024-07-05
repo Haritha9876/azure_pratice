@@ -1,0 +1,54 @@
+{
+	"name": "df_orderitems_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "part-00000-0fb89809-ee76-4cc7-a23b-41cd0312b23f-c000.snappy.parquet",
+				"folderPath": "orders",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Order_Id",
+				"type": "INT32"
+			},
+			{
+				"name": "Order_Datetime",
+				"type": "INT96"
+			},
+			{
+				"name": "Customer_Id",
+				"type": "INT32"
+			},
+			{
+				"name": "Order_Status",
+				"type": "UTF8"
+			},
+			{
+				"name": "Store_Id",
+				"type": "INT32"
+			},
+			{
+				"name": "Ingested_By",
+				"type": "UTF8"
+			},
+			{
+				"name": "Ingested_Time",
+				"type": "INT96"
+			},
+			{
+				"name": "Ingested_Date",
+				"type": "DATE"
+			}
+		]
+	}
+}
