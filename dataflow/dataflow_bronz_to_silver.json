@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds1_dl_df_Parquet_silver",
+						"referenceName": "ds1_dl_df_Parquet_orderitems_silver",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -68,6 +68,14 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          Store_Id as integer,",
+				"          Store_Name as string,",
+				"          Web_Address as string,",
+				"          Latitude as double,",
+				"          Longitude as double,",
+				"          Ingested_By as string",
+				"     ),",
 				"     format: 'parquet',",
 				"     umask: 0022,",
 				"     preCommands: [],",

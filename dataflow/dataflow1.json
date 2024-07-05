@@ -28,24 +28,12 @@
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "ds1_dl_df_Parquet_silver",
-						"type": "DatasetReference"
-					},
 					"name": "sinkjson"
 				},
 				{
-					"dataset": {
-						"referenceName": "ds1_dl_df_Parquet_silver",
-						"type": "DatasetReference"
-					},
 					"name": "sink1"
 				},
 				{
-					"dataset": {
-						"referenceName": "ds1_dl_df_Parquet_silver",
-						"type": "DatasetReference"
-					},
 					"name": "sink2"
 				}
 			],
@@ -164,28 +152,25 @@
 				"     skipDuplicateMapOutputs: true) ~> select3",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'parquet',",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkjson",
+				"     skipDuplicateMapOutputs: true,",
+				"     format: 'parquet',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sinkjson",
 				"select2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'parquet',",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"     skipDuplicateMapOutputs: true,",
+				"     format: 'parquet',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sink1",
 				"select3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'parquet',",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink2"
+				"     skipDuplicateMapOutputs: true,",
+				"     format: 'parquet',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> sink2"
 			]
 		}
 	}
