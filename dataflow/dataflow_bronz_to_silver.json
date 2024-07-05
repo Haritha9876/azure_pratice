@@ -60,7 +60,6 @@
 				"          Order_Status = ORDER_STATUS,",
 				"          Customer_Id = CUSTOMER_ID,",
 				"          Store_Id = STORE_ID,",
-				"          Order_Time,",
 				"          Ingested_by,",
 				"          Ingestion_Date,",
 				"          Ingestion_Time",
