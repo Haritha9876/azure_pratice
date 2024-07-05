@@ -87,7 +87,7 @@
 								},
 								"cases": [
 									{
-										"value": "txt",
+										"value": "csv",
 										"activities": [
 											{
 												"name": "Copy_csv landing to bronz",
@@ -521,7 +521,6 @@
 														"storeSettings": {
 															"type": "AzureBlobStorageReadSettings",
 															"recursive": true,
-															"wildcardFileName": "*.parquet",
 															"enablePartitionDiscovery": false
 														},
 														"formatSettings": {
@@ -591,7 +590,6 @@
 														"storeSettings": {
 															"type": "AzureBlobStorageReadSettings",
 															"recursive": true,
-															"wildcardFileName": "*.parquet",
 															"enablePartitionDiscovery": false
 														},
 														"formatSettings": {
@@ -755,7 +753,9 @@
 						"type": "BinarySource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
-							"recursive": true
+							"recursive": true,
+							"wildcardFileName": "*",
+							"deleteFilesAfterCompletion": false
 						},
 						"formatSettings": {
 							"type": "BinaryReadSettings"
