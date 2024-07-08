@@ -7,6 +7,100 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [
+			{
+				"name": "ORDER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LINE_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Product_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "UNIT_PRICE",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "QUANTITY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUSTOMER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ORDER_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "STORE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Store_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Web_Address",
+				"type": "varchar"
+			},
+			{
+				"name": "Latitude",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Longitude",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "Full_Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Email_Address",
+				"type": "varchar"
+			},
+			{
+				"name": "Ingested_by",
+				"type": "varchar"
+			},
+			{
+				"name": "Ingestion_Date",
+				"type": "date"
+			},
+			{
+				"name": "Ingestion_TIMESTAMP",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "ORDER_DATE",
+				"type": "timestamp"
+			}
+		],
+		"typeProperties": {
+			"schema": "Orders_QR",
+			"table": "ORDERS_QR"
+		}
 	}
 }
