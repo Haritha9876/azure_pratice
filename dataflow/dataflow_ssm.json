@@ -285,8 +285,7 @@
 				"          Email_Address,",
 				"          Ingested_by,",
 				"          Ingestion_Date,",
-				"          Ingestion_TIMESTAMP = Ingestion_Time,",
-				"          ORDER_DATE = Order_Datetime",
+				"          Ingestion_TIMESTAMP = Ingestion_Time",
 				"     )) ~> sink1"
 			]
 		}
