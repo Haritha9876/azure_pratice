@@ -1,0 +1,9 @@
+{
+	"name": "azuredatafactoryazuredev002",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "53dede8a-4d3f-4ece-8e29-4d15d7b3401c",
+		"tenantId": "c20eccc8-c585-4c14-9c91-9be6cc954d83"
+	}
+}

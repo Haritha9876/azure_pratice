@@ -6,71 +6,168 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds1_dl_df_Json_bronz",
+						"referenceName": "datasetemployee_csv",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "employee"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_department_csv",
+						"type": "DatasetReference"
+					},
+					"name": "depart"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_location_csv",
+						"type": "DatasetReference"
+					},
+					"name": "location"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_country_csv",
+						"type": "DatasetReference"
+					},
+					"name": "country"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds1_dl_df_Parquet_silver",
+						"referenceName": "dataset_final_csv",
 						"type": "DatasetReference"
 					},
-					"name": "sinkjson"
+					"name": "sink1"
 				}
 			],
 			"transformations": [
 				{
-					"name": "cast1"
+					"name": "join1"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "join2"
+				},
+				{
+					"name": "join3"
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "aggregate1",
+					"description": "count(EMPLOYEE_ID) \n"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          STORE_ID as string,",
-				"          STORE_NAME as string,",
-				"          WEB_ADDRESS as string,",
-				"          LATITUDE as string,",
-				"          LONGITUDE as string",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as date 'dd/MM/yyyy',",
+				"          JOB_ID as string,",
+				"          SALARY as decimal(10,2),",
+				"          MANAGER_ID as integer,",
+				"          DEPARTMENT_ID as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> source1",
-				"source1 cast(output(",
-				"          STORE_ID as integer,",
-				"          STORE_NAME as string,",
-				"          WEB_ADDRESS as string,",
-				"          LATITUDE as double,",
-				"          LONGITUDE as double",
+				"     ignoreNoFilesFound: false) ~> employee",
+				"source(output(",
+				"          DEPARTMENT_ID as integer,",
+				"          DEPARTMENT_NAME as string,",
+				"          MANAGER_ID as integer,",
+				"          LOCATION_ID as integer",
 				"     ),",
-				"     errors: true) ~> cast1",
-				"cast1 derive({ingested by} = 'haritha') ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
-				"          STORE_ID,",
-				"          STORE_NAME,",
-				"          WEB_ADDRESS,",
-				"          LATITUDE,",
-				"          LONGITUDE,",
-				"          Ingested_By = {ingested by}",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> depart",
+				"source(output(",
+				"          LOCATION_ID as integer,",
+				"          STREET_ADDRESS as string,",
+				"          POSTAL_CODE as integer,",
+				"          CITY as string,",
+				"          STATE_PROVINCE as string,",
+				"          COUNTRY_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> location",
+				"source(output(",
+				"          COUNTRY_ID as string,",
+				"          COUNTRY_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> country",
+				"employee, depart join(employee@DEPARTMENT_ID == depart@DEPARTMENT_ID,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, location join(depart@LOCATION_ID == location@LOCATION_ID,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2, country join(location@COUNTRY_ID == country@COUNTRY_ID,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3 select(mapColumn(",
+				"          EMPLOYEE_ID,",
+				"          FIRST_NAME,",
+				"          LAST_NAME,",
+				"          EMAIL,",
+				"          PHONE_NUMBER,",
+				"          HIRE_DATE,",
+				"          JOB_ID,",
+				"          SALARY,",
+				"          MANAGER_ID = employee@MANAGER_ID,",
+				"          DEPARTMENT_ID = employee@DEPARTMENT_ID,",
+				"          DEPARTMENT_NAME,",
+				"          MANAGER_ID = depart@MANAGER_ID,",
+				"          LOCATION_ID = depart@LOCATION_ID,",
+				"          STREET_ADDRESS,",
+				"          POSTAL_CODE,",
+				"          CITY,",
+				"          STATE_PROVINCE,",
+				"          COUNTRY_ID = location@COUNTRY_ID,",
+				"          COUNTRY_NAME",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"select1 filter(!isNull(COUNTRY_ID)) ~> filter1",
+				"filter1 aggregate(groupBy(EMPLOYEE_ID,",
+				"          FIRST_NAME,",
+				"          LAST_NAME,",
+				"          EMAIL,",
+				"          PHONE_NUMBER,",
+				"          HIRE_DATE,",
+				"          JOB_ID,",
+				"          SALARY,",
+				"          MANAGER_ID,",
+				"          DEPARTMENT_ID,",
+				"          DEPARTMENT_NAME,",
+				"          LOCATION_ID,",
+				"          STREET_ADDRESS,",
+				"          POSTAL_CODE,",
+				"          CITY,",
+				"          STATE_PROVINCE,",
+				"          COUNTRY_ID,",
+				"          COUNTRY_NAME),",
+				"     EmployeeCount = count(EMPLOYEE_ID)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'parquet',",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkjson"
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
